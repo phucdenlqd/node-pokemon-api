@@ -1,29 +1,34 @@
 const express = require('express');
 const morgan = require('morgan');
 const favicon = require('serve-favicon');
-const { success } = require('./helper.js');
-let pokemons = require('./mock-pokemon');
+const bodyParser = require('body-parser');
+const sequelize = require('./src/db/sequelize');
+const findAllPokemons = require('./src/routes/findAllPokemons');
+const findPokemonByPk = require('./src/routes/findPokemonByPk');
+const createPokemon = require('./src/routes/createPokemon');
+const updatePokemon = require('./src/routes/updatePokemon');
+const deletePokemon = require('./src/routes/deletePokemon');
 
 const app = express();
 const port = 3000;
 
 app
   .use(favicon(__dirname + '/favicon.ico'))
-  .use(morgan('dev'));
-  
-app.get('/', (req, res) => res.send('Hello again, Express !!!'));
+  .use(morgan('dev'))
+  .use(bodyParser.json());
 
-app.get('/api/pokemons/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const pokemon = pokemons.find((pokemon) => pokemon.id === id);
-  const message = 'Un pokemon a ete bien trouve';
-  res.json(success(message, pokemon));
-});
+sequelize.initDb();
+findAllPokemons(app);
+findPokemonByPk(app);
+createPokemon(app);
+updatePokemon(app);
+deletePokemon(app);
 
-app.get('/api/pokemons', (req, res) => {
-  const message = 'La liste de pokemon a ete bien entregistree';
-  res.json(success(message, pokemons));
-});
+// On ajoute la gestion des erreurs 404
+app.use(({res}) => {
+  const message = 'Impossible de trouver la ressource demande ! Vous pouvez essayer une autre URL';
+  res.status(404).json({message})
+})
 
 app.listen(port, () =>
   console.log(`Notre application est demarree sur: http://localhost:${port}`)
