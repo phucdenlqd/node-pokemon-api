@@ -1,6 +1,7 @@
 const express = require('express');
 const favicon = require('serve-favicon');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const sequelize = require('./src/db/sequelize');
 const findAllPokemons = require('./src/routes/findAllPokemons');
 const findPokemonByPk = require('./src/routes/findPokemonByPk');
@@ -12,7 +13,7 @@ const login = require('./src/routes/login');
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(favicon(__dirname + '/favicon.ico')).use(bodyParser.json());
+app.use(favicon(__dirname + '/favicon.ico')).use(bodyParser.json()).use(cors())
 
 sequelize.initDb();
 
