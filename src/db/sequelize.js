@@ -36,7 +36,8 @@ const options =
   process.env.NODE_ENV == 'production' ? undefined : { force: true };
 const initDb = () => {
   return sequelize.sync(options).then((_) => {
-    if (process.env.NODE_ENV == 'development') {
+    console.log(process.env);
+    if (process.env.NODE_ENV === 'development') {
       pokemons.map((pokemon) => {
         Pokemon.create(
           {
